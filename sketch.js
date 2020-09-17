@@ -2,13 +2,13 @@ var monkey,monkey_running,scene;
 var line;
 var bananaImage,stoneImage,stoneGroup;
 var ground;
-var survivalTime;
+var score;
 var PLAY = 1;
 var END = 0;
 var gameState = PLAY;
 var counter = 0;
 
-function preload(){
+function preload(){ 
  pic = loadImage("jungle.jpg");
  
  Monkey_running=loadAnimation("Monkey_01.png","Monkey_02.png","Monkey_03.png","Monkey_04.png","Monkey_05.png","Monkey_06.png","Monkey_07.png","Monkey_08.png","Monkey_09.png", "Monkey_10.png");
@@ -19,9 +19,11 @@ function preload(){
 
 function setup() {
   createCanvas(400,400);   
+ 
+ //giving the score 0; 
+  score = 0;
   
-  survivalTime = 0;
-  
+ //creating the variables; 
   scene = createSprite(200,200,30,30); 
   scene.addImage("back",pic);
    scene.velocityX = -2;
@@ -34,35 +36,13 @@ function setup() {
   ground = createSprite(200,390,400,10);
   ground.visible = false;
   
+ //creating the groups; 
   bananaGroup = new Group();
   stoneGroup = new Group();
 }
 
 function draw() {
-  background(220);
-
-  if (scene.x < 0){ 
- scene.x = 200;
- scene.velocityX = -2;
-}
-    
-if(stoneGroup.isTouching(monkey)) {
-  stoneGroup.destroyEach();
-  counter = counter+1;
-   switch(counter){
-    case 1 : monkey.scale = 0.1;
-      break;
-    case 2 : gameState = END;
-      break;
-    default : break; 
-  }     
-}
-  
-if(bananaGroup.isTouching(monkey)){
- survivalTime  = survivalTime+2;
- bananaGroup.destroyEach(); 
-
-}  
+  background(220); 
   
 if(gameState === END){
   ground.velocityX = 0;
@@ -75,20 +55,17 @@ if(gameState === END){
   line = createSprite(200,330,400,4);
   line.visible = false;
   monkey.collide(line);
+  
 } 
+ 
+ //colliding the monkey with the ground; 
  monkey.collide(ground); 
   
 if(gameState === PLAY){
   spawnBanana();
   spawnStone();
-}    
-if(keyDown("space")) {
-    monkey.velocityY = -17;                
-}   
   
- monkey.velocityY = monkey.velocityY + 0.8
- 
-  switch(survivalTime){
+  switch(score){
    case 10 : monkey.scale = 0.12;
      break;
    case 20 : monkey.scale = 0.14;
@@ -112,12 +89,43 @@ if(keyDown("space")) {
    default : break;  
  }
   
+ if (scene.x < 0){ 
+ scene.x = 200;
+ scene.velocityX = -2;
+}
+    
+if(stoneGroup.isTouching(monkey)) {
+  stoneGroup.destroyEach();
+  counter = counter+1;
+   switch(counter){
+    case 1 : monkey.scale = 0.1;
+      break;
+    case 2 : gameState = END;
+      break;
+    default : break; 
+  }     
+}
+  
+if(bananaGroup.isTouching(monkey)){
+ score  = score+2;
+ bananaGroup.destroyEach(); 
+}   
+}    
+if(keyDown("space")) {
+    monkey.velocityY = -17;                
+}   
+  
+ monkey.velocityY = monkey.velocityY + 0.8
+ 
 drawSprites(); 
   stroke("yellow");
   fill("red");
   textStyle(BOLD);
   textSize(25);
-  text("survivalTime:"+survivalTime,200,21); 
+  text("score:"+score,200,21); 
+ if(gameState === END){ 
+  text("GAME OVER!!",100,200);
+ }
 }
 
 function spawnBanana() {
